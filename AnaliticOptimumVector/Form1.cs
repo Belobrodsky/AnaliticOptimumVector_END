@@ -88,6 +88,10 @@ namespace AnaliticOptimumVector
             if (openFileDialog1.ShowDialog()==DialogResult.OK)
             {
 
+                bool f = false;
+
+                comboBox1.Items.Clear();
+                comboBox2.Items.Clear();
 
                 foreach (var FileName in openFileDialog1.FileNames)
                 {
@@ -97,6 +101,7 @@ namespace AnaliticOptimumVector
 
                     List<double> vecA_single = new List<double>();
 
+                    int c = 0;
                     while (line != null)
                     {
                         line = sr.ReadLine();
@@ -105,12 +110,23 @@ namespace AnaliticOptimumVector
                         {
                             //   MessageBox.Show(vecA.Count.ToString());
                             vecA_single.Add(Double.Parse(line));
+                           
+                            if (!f)
+                            {
+                                c++;
+                                comboBox1.Items.Add(c);
+                                comboBox2.Items.Add(c);
+                            }
+                       
                         }
                     }
 
-                  // Normalize(vecA_single); //так как по ссылке то так просто
+                    f = true;
+               
 
-                   vecA.Add(vecA_single);
+                    // Normalize(vecA_single); //так как по ссылке то так просто
+
+                    vecA.Add(vecA_single);
 
                     chart1.Series[0].Points.AddXY(vecA_single[0], vecA_single[1]);
 
@@ -126,7 +142,9 @@ namespace AnaliticOptimumVector
                 } //if Open
 
             MessageBox.Show("Добавлено и отнормировано " + vecA.Count.ToString()  + " векторов типа А");
-          //  openFileDialog1.
+            comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 1;
+            //  openFileDialog1.
 
         }
 
@@ -269,6 +287,12 @@ namespace AnaliticOptimumVector
         //Переберем всевозможные варианты векторов А и Б и найдем для каждого из них оптимальный вектор разницы и частного
         private void найтиСToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+            
+
+
+
+
 
             //пройдемся по всем векторам A
             foreach (var A_single in vecA)
@@ -616,6 +640,28 @@ namespace AnaliticOptimumVector
 
 
 //            }
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            chart1.Series[0].Points.Clear();
+            chart1.Series[1].Points.Clear();
+            chart1.Series[2].Points.Clear();
+            chart1.Series[3].Points.Clear();
+
+
+            int X = (int)comboBox1.SelectedIndex;
+            int Y = (int)comboBox2.SelectedIndex;
+
+
+            MessageBox.Show(X.ToString()+ " " + Y.ToString());
+
+            foreach (var item in vecA)
+            {
+
+            }
+
 
         }
     }
