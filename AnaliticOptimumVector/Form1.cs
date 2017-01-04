@@ -35,12 +35,12 @@ namespace AnaliticOptimumVector
 
         public void Normalize(List<Double> src)
         {
-            double sr = src.Average();
-            //для 0 среднего
-            for (int i = 0; i < src.Count; i++)
-            {
-                src[i] = src[i] - sr;
-            }
+            //double sr = src.Average();
+            ////для 0 среднего
+            //for (int i = 0; i < src.Count; i++)
+            //{
+            //    src[i] = src[i] - sr;
+            //}
 
 
             double A = new double();
@@ -108,10 +108,16 @@ namespace AnaliticOptimumVector
                         }
                     }
 
-                   Normalize(vecA_single); //так как по ссылке то так просто
+                  // Normalize(vecA_single); //так как по ссылке то так просто
 
                    vecA.Add(vecA_single);
 
+                    chart1.Series[0].Points.AddXY(vecA_single[0], vecA_single[1]);
+
+
+
+                   // MessageBox.Show(vecA_single[0].ToString()+" "+ vecA_single[1].ToString());
+                    
                    sr.Close();
 
                 } //foreach
@@ -149,9 +155,11 @@ namespace AnaliticOptimumVector
                         }
                     }
 
-                    Normalize(vecB_single); //так как по ссылке то так просто
+                   // Normalize(vecB_single); //так как по ссылке то так просто
 
                     vecB.Add(vecB_single);
+
+                    chart1.Series[1].Points.AddXY(vecB_single[0], vecB_single[1]);
 
                     sr.Close();
 
@@ -273,9 +281,13 @@ namespace AnaliticOptimumVector
                     
                     //И сформируем массив из оптимальных векторов для разницы
                     vecRaz.Add(FindOptimumRazniza(A_single,B_single));
+                    chart1.Series[2].Points.AddXY(vecRaz[vecRaz.Count-1][0], vecRaz[vecRaz.Count - 1][1]);
+
+
 
                     vecChas.Add(FindOptimumChastnoe(A_single,B_single));
-                   
+                    chart1.Series[3].Points.AddXY(vecChas[vecChas.Count - 1][0], vecChas[vecChas.Count - 1][1]);
+
                 }
 
             }
