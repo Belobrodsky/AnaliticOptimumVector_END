@@ -85,6 +85,7 @@ namespace AnaliticOptimumVector
         /// <param name="e"></param>
         private void открытьAToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int cc = 0;
             if (openFileDialog1.ShowDialog()==DialogResult.OK)
             {
 
@@ -92,6 +93,8 @@ namespace AnaliticOptimumVector
 
                 comboBox1.Items.Clear();
                 comboBox2.Items.Clear();
+
+               
 
                 foreach (var FileName in openFileDialog1.FileNames)
                 {
@@ -102,6 +105,7 @@ namespace AnaliticOptimumVector
                     List<double> vecA_single = new List<double>();
 
                     int c = 0;
+                    
                     while (line != null)
                     {
                         line = sr.ReadLine();
@@ -122,9 +126,15 @@ namespace AnaliticOptimumVector
                     }
 
                     f = true;
-               
 
-                    // Normalize(vecA_single); //так как по ссылке то так просто
+
+                    if ((checkBox5.Checked) && (PrintNorma(vecA_single)!=0))
+                    {
+                        Normalize(vecA_single); //так как по ссылке то так просто
+
+                        cc++;
+                    }
+                    
 
                     vecA.Add(vecA_single);
 
@@ -141,7 +151,7 @@ namespace AnaliticOptimumVector
                 
                 } //if Open
 
-            MessageBox.Show("Добавлено и отнормировано " + vecA.Count.ToString()  + " векторов типа А");
+            MessageBox.Show("Добавлено" + vecA.Count.ToString()  + " векторов типа А из них отнормировано было " + cc.ToString());
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 1;
             //  openFileDialog1.
@@ -150,6 +160,7 @@ namespace AnaliticOptimumVector
 
         private void открытьBToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int cc = 0;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
 
@@ -173,7 +184,13 @@ namespace AnaliticOptimumVector
                         }
                     }
 
-                   // Normalize(vecB_single); //так как по ссылке то так просто
+
+                    if ((checkBox5.Checked) && (PrintNorma(vecB_single) != 0))
+                    {
+                        Normalize(vecB_single); //так как по ссылке то так просто
+                        cc++;
+                    }
+                   // 
 
                     vecB.Add(vecB_single);
 
@@ -186,7 +203,7 @@ namespace AnaliticOptimumVector
 
             } //if Open
 
-            MessageBox.Show("Добавлено и отнормировано" + vecB.Count.ToString() + " векторов типа B");
+            MessageBox.Show("Добавлено" + vecB.Count.ToString() + " векторов типа B из них отнормированно было " + cc.ToString());
         }
 
 
@@ -305,21 +322,26 @@ namespace AnaliticOptimumVector
                     
                     //И сформируем массив из оптимальных векторов для разницы
                     vecRaz.Add(FindOptimumRazniza(A_single,B_single));
-                    chart1.Series[2].Points.AddXY(vecRaz[vecRaz.Count-1][0], vecRaz[vecRaz.Count - 1][1]);
+                 //   chart1.Series[2].Points.AddXY(vecRaz[vecRaz.Count-1][0], vecRaz[vecRaz.Count - 1][1]);
 
 
 
                     vecChas.Add(FindOptimumChastnoe(A_single,B_single));
-                    chart1.Series[3].Points.AddXY(vecChas[vecChas.Count - 1][0], vecChas[vecChas.Count - 1][1]);
+                   // chart1.Series[3].Points.AddXY(vecChas[vecChas.Count - 1][0], vecChas[vecChas.Count - 1][1]);
 
                 }
 
             }
 
-           // if (saveFileDialog1.ShowDialog()==DialogResult.OK)
-           // {
+            // comboBox1.SelectedIndex = 0;
+            //comboBox2.SelectedIndex = 1;
 
-                StreamWriter sw = new StreamWriter("OPTIMUM RAZ.csv");
+            OnChangeComboboxes(this, null);
+
+            // if (saveFileDialog1.ShowDialog()==DialogResult.OK)
+            // {
+
+            StreamWriter sw = new StreamWriter("OPTIMUM RAZ.csv");
 
             //по длине сигнала
                 for (int i = 0; i < vecRaz[0].Count; i++)
@@ -349,19 +371,47 @@ namespace AnaliticOptimumVector
              sw2.Close();
 
 
+            StreamWriter sw3 = new StreamWriter("sos_1_vhod_NORM_" +checkBox5.Checked + "_.csv");
+            //по длине сигнала
+            for (int i = 0; i < vecA[0].Count; i++)
+            {
+                //по кол-во сигналов
+                for (int j = 0; j < vecA.Count; j++)
+                {
+                    sw3.Write("{0};", vecA[j][i]);
+                }
+                sw3.WriteLine();
+            }
+            sw3.Close();
 
-       //     }
-        //
+
+            StreamWriter sw4 = new StreamWriter("sos_2_vhod_NORM_" + checkBox5.Checked + "_.csv");
+            //по длине сигнала
+            for (int i = 0; i < vecB[0].Count; i++)
+            {
+                //по кол-во сигналов
+                for (int j = 0; j < vecB.Count; j++)
+                {
+                    sw4.Write("{0};", vecB[j][i]);
+                }
+                sw4.WriteLine();
+            }
+            sw4.Close();
+
+
+
+            //     }
+            //
 
 
 
 
 
 
-        //    //начнем считать свертку как в основной программе
-        //    double sum = new float();
-        //    double xx = new float();
-        //    double hh = new float();
+            //    //начнем считать свертку как в основной программе
+            //    double sum = new float();
+            //    double xx = new float();
+            //    double hh = new float();
 
 
             //for (int k = 0; k < vecA.Count; k++) //пробежимся по длине всего сигнала
@@ -412,7 +462,7 @@ namespace AnaliticOptimumVector
             //double A3 = (-B2 * F1F2 + Math.Sqrt((B2 * B2) * ((F1F2 * F1F2) - (F1F1 * F2F2)) + F1F1)) / F1F1;
 
             //double A4 = (-B2 * F1F2 - Math.Sqrt((B2 * B2) * ((F1F2 * F1F2) - (F1F1 * F2F2)) + F1F1)) / F1F1;
-            
+
             //Таким образом, у нас имееться 8 комбинаций и лишь одна из них максималльная
 
             //Найдем ее путем перебора
@@ -428,7 +478,7 @@ namespace AnaliticOptimumVector
             //    F3[i] = new List<double>();
             //}
 
-            
+
 
 
             //C=A-(A,B)B/|B|^{2}
@@ -471,179 +521,179 @@ namespace AnaliticOptimumVector
 
 
 
-        
-//            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-//            {
 
-//                StreamWriter sw = new StreamWriter(saveFileDialog1.FileName + ".csv");
+            //            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //            {
 
-//                sw.WriteLine("signal F1;signal F2; OPTIMUM F3 (F1F3-F2F3=MAX) ; |F1F3-F2F3|= ;a=;b=;NORMA F1;NORMA F2;NORMA F3; alpha^2+2alpha*beta*(f1,f2) +beta^2 = 1 ???;|F1F3/F2F3|= MAX ;");
+            //                StreamWriter sw = new StreamWriter(saveFileDialog1.FileName + ".csv");
 
-//                int length;
-//                length = Math.Max(vecA.Count, vecB.Count);
-//                length = Math.Max(length, F3[maxIndex].Count);
+            //                sw.WriteLine("signal F1;signal F2; OPTIMUM F3 (F1F3-F2F3=MAX) ; |F1F3-F2F3|= ;a=;b=;NORMA F1;NORMA F2;NORMA F3; alpha^2+2alpha*beta*(f1,f2) +beta^2 = 1 ???;|F1F3/F2F3|= MAX ;");
 
-
-//                for (int i = 0; i < length; i++)
-//                {
+            //                int length;
+            //                length = Math.Max(vecA.Count, vecB.Count);
+            //                length = Math.Max(length, F3[maxIndex].Count);
 
 
-//                    //сигнал F1
-//                    if (i<vecA.Count)
-//                    {
-//                        sw.Write(vecA[i]+";");
-//                    }
-//                    else sw.Write(";");
+            //                for (int i = 0; i < length; i++)
+            //                {
 
 
-//                    //сигнал F2
-//                    if (i < vecB.Count)
-//                    {
-//                        sw.Write(vecB[i] + ";");
-//                    }
-//                    else sw.Write(";");
-
-//                    //оптимум F3
-//                    if (i < F3[maxIndex].Count)
-//                    {
-//                        sw.Write(F3[maxIndex][i] + ";");
-//                    }
-//                    else sw.Write(";");
+            //                    //сигнал F1
+            //                    if (i<vecA.Count)
+            //                    {
+            //                        sw.Write(vecA[i]+";");
+            //                    }
+            //                    else sw.Write(";");
 
 
-//                  //  sw.WriteLine("signal F1;signal F2; OPTIMUM F3; |F1F3-F2F3|=;a=;b=");
- 
+            //                    //сигнал F2
+            //                    if (i < vecB.Count)
+            //                    {
+            //                        sw.Write(vecB[i] + ";");
+            //                    }
+            //                    else sw.Write(";");
 
-//                    //тут выведем |F1F3-F2F3|=
-//                    if (i == 0)
-//                    {
-//                       // sw.Write(kriterii(vecA, vecB, F3[maxIndex]) + ";");
-//                    }
-//                    else sw.Write(";");
-
-
-
-//                    //тут выведем a и b оптимального фильтра
-//                    if (i == 0)
-//                    {
-//                        switch (maxIndex)
-//                        {
-//                //F3[0].Add(A1 * vecA[i] + B1 * vecB[i]);
-//                //F3[1].Add(A2 * vecA[i] + B1 * vecB[i]);
-//                //F3[2].Add(A3* vecA[i] + B1 * vecB[i]);
-//                //F3[3].Add(A4 * vecA[i] + B1 * vecB[i]);
-
-//                //F3[4].Add(A1 * vecA[i] + B2 * vecB[i]);
-//                //F3[5].Add(A2 * vecA[i] + B2 * vecB[i]);
-//                //F3[6].Add(A3 * vecA[i] + B2 * vecB[i]);
-//                //F3[7].Add(A4 * vecA[i] + B2 * vecB[i]);
+            //                    //оптимум F3
+            //                    if (i < F3[maxIndex].Count)
+            //                    {
+            //                        sw.Write(F3[maxIndex][i] + ";");
+            //                    }
+            //                    else sw.Write(";");
 
 
-//                            case 0:
-//                                 sw.Write("{0};{1};",A1,B1);
-//                                break;
-//                            case 1:
-//                                sw.Write("{0};{1};", A2, B1);
-//                                break;
-//                            case 2:
-//                                sw.Write("{0};{1};", A3, B1);
-//                                break;
-//                            case 3:
-//                                sw.Write("{0};{1};", A4, B1);
-//                                break;
-//                            case 4:
-//                                sw.Write("{0};{1};", A1, B2);
-//                                break;
-//                            case 5:
-//                                sw.Write("{0};{1};", A2, B2);
-//                                break;
-//                            case 6:
-//                                sw.Write("{0};{1};", A3, B2);
-//                                break;
-//                            case 7:
-//                                sw.Write("{0};{1};", A4, B2);
-//                                break;
-
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                    else sw.Write(";;");
-
-//                    //тут выведем нормы
-//                    if (i == 0)
-//                    {
-//                     //   sw.Write("{0};{1};{2};", PrintNorma(vecA), PrintNorma(vecB), PrintNorma(F3[maxIndex]));
-//                    }
-//                    else sw.Write(";;;");
+            //                  //  sw.WriteLine("signal F1;signal F2; OPTIMUM F3; |F1F3-F2F3|=;a=;b=");
 
 
-//                    //Выведем дополнительныю проверку из Борзуновского письма
-//                    if (i == 0)
-//                    {
-//                        switch (maxIndex)
-//                        {
-//                            //F3[0].Add(A1 * vecA[i] + B1 * vecB[i]);
-//                            //F3[1].Add(A2 * vecA[i] + B1 * vecB[i]);
-//                            //F3[2].Add(A3* vecA[i] + B1 * vecB[i]);
-//                            //F3[3].Add(A4 * vecA[i] + B1 * vecB[i]);
-
-//                            //F3[4].Add(A1 * vecA[i] + B2 * vecB[i]);
-//                            //F3[5].Add(A2 * vecA[i] + B2 * vecB[i]);
-//                            //F3[6].Add(A3 * vecA[i] + B2 * vecB[i]);
-//                            //F3[7].Add(A4 * vecA[i] + B2 * vecB[i]);
-
-////alpha^2+2alpha*beta*(f1,f2) +beta^2
-//                            case 0:
-//                                sw.Write("{0};", Math.Sqrt(A1*A1+2*A1*B1*F1F2+B1*B1));
-//                                break;
-//                            case 1:
-//                                sw.Write("{0};", Math.Sqrt(A2 * A2 + 2 * A2 * B1 * F1F2 + B1 * B1));
-//                                break;
-//                            case 2:
-//                                sw.Write("{0};", Math.Sqrt(A3 * A3 + 2 * A3 * B1 * F1F2 + B1 * B1));
-//                                break;
-//                            case 3:
-//                                sw.Write("{0};", Math.Sqrt(A4 * A4 + 2 * A4 * B1 * F1F2 + B1 * B1));
-//                                break;
-//                            case 4:
-//                                sw.Write("{0};", Math.Sqrt(A1 * A1 + 2 * A1 * B2 * F1F2 + B2 * B2));
-//                                break;
-//                            case 5:
-//                                sw.Write("{0};", Math.Sqrt(A2 * A2 + 2 * A2 * B2 * F1F2 + B2 * B2));
-//                                break;
-//                            case 6:
-//                                sw.Write("{0};", Math.Sqrt(A3 * A3 + 2 * A3 * B2 * F1F2 + B2 * B2));
-//                                break;
-//                            case 7:
-//                                sw.Write("{0};", Math.Sqrt(A4 * A4 + 2 * A4 * B2 * F1F2 + B2 * B2));
-//                                break;
-
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                    else sw.Write(";");
-
-
-//                    if (i < F3_kiselev.Count)
-//                    {
-//                        sw.Write("{0};", F3_kiselev[i]);
-//                    }
-//                    else sw.Write(";");
+            //                    //тут выведем |F1F3-F2F3|=
+            //                    if (i == 0)
+            //                    {
+            //                       // sw.Write(kriterii(vecA, vecB, F3[maxIndex]) + ";");
+            //                    }
+            //                    else sw.Write(";");
 
 
 
-//                    sw.WriteLine();
-//                }
-//                   sw.Close();
+            //                    //тут выведем a и b оптимального фильтра
+            //                    if (i == 0)
+            //                    {
+            //                        switch (maxIndex)
+            //                        {
+            //                //F3[0].Add(A1 * vecA[i] + B1 * vecB[i]);
+            //                //F3[1].Add(A2 * vecA[i] + B1 * vecB[i]);
+            //                //F3[2].Add(A3* vecA[i] + B1 * vecB[i]);
+            //                //F3[3].Add(A4 * vecA[i] + B1 * vecB[i]);
+
+            //                //F3[4].Add(A1 * vecA[i] + B2 * vecB[i]);
+            //                //F3[5].Add(A2 * vecA[i] + B2 * vecB[i]);
+            //                //F3[6].Add(A3 * vecA[i] + B2 * vecB[i]);
+            //                //F3[7].Add(A4 * vecA[i] + B2 * vecB[i]);
 
 
-//            }
+            //                            case 0:
+            //                                 sw.Write("{0};{1};",A1,B1);
+            //                                break;
+            //                            case 1:
+            //                                sw.Write("{0};{1};", A2, B1);
+            //                                break;
+            //                            case 2:
+            //                                sw.Write("{0};{1};", A3, B1);
+            //                                break;
+            //                            case 3:
+            //                                sw.Write("{0};{1};", A4, B1);
+            //                                break;
+            //                            case 4:
+            //                                sw.Write("{0};{1};", A1, B2);
+            //                                break;
+            //                            case 5:
+            //                                sw.Write("{0};{1};", A2, B2);
+            //                                break;
+            //                            case 6:
+            //                                sw.Write("{0};{1};", A3, B2);
+            //                                break;
+            //                            case 7:
+            //                                sw.Write("{0};{1};", A4, B2);
+            //                                break;
+
+            //                            default:
+            //                                break;
+            //                        }
+            //                    }
+            //                    else sw.Write(";;");
+
+            //                    //тут выведем нормы
+            //                    if (i == 0)
+            //                    {
+            //                     //   sw.Write("{0};{1};{2};", PrintNorma(vecA), PrintNorma(vecB), PrintNorma(F3[maxIndex]));
+            //                    }
+            //                    else sw.Write(";;;");
+
+
+            //                    //Выведем дополнительныю проверку из Борзуновского письма
+            //                    if (i == 0)
+            //                    {
+            //                        switch (maxIndex)
+            //                        {
+            //                            //F3[0].Add(A1 * vecA[i] + B1 * vecB[i]);
+            //                            //F3[1].Add(A2 * vecA[i] + B1 * vecB[i]);
+            //                            //F3[2].Add(A3* vecA[i] + B1 * vecB[i]);
+            //                            //F3[3].Add(A4 * vecA[i] + B1 * vecB[i]);
+
+            //                            //F3[4].Add(A1 * vecA[i] + B2 * vecB[i]);
+            //                            //F3[5].Add(A2 * vecA[i] + B2 * vecB[i]);
+            //                            //F3[6].Add(A3 * vecA[i] + B2 * vecB[i]);
+            //                            //F3[7].Add(A4 * vecA[i] + B2 * vecB[i]);
+
+            ////alpha^2+2alpha*beta*(f1,f2) +beta^2
+            //                            case 0:
+            //                                sw.Write("{0};", Math.Sqrt(A1*A1+2*A1*B1*F1F2+B1*B1));
+            //                                break;
+            //                            case 1:
+            //                                sw.Write("{0};", Math.Sqrt(A2 * A2 + 2 * A2 * B1 * F1F2 + B1 * B1));
+            //                                break;
+            //                            case 2:
+            //                                sw.Write("{0};", Math.Sqrt(A3 * A3 + 2 * A3 * B1 * F1F2 + B1 * B1));
+            //                                break;
+            //                            case 3:
+            //                                sw.Write("{0};", Math.Sqrt(A4 * A4 + 2 * A4 * B1 * F1F2 + B1 * B1));
+            //                                break;
+            //                            case 4:
+            //                                sw.Write("{0};", Math.Sqrt(A1 * A1 + 2 * A1 * B2 * F1F2 + B2 * B2));
+            //                                break;
+            //                            case 5:
+            //                                sw.Write("{0};", Math.Sqrt(A2 * A2 + 2 * A2 * B2 * F1F2 + B2 * B2));
+            //                                break;
+            //                            case 6:
+            //                                sw.Write("{0};", Math.Sqrt(A3 * A3 + 2 * A3 * B2 * F1F2 + B2 * B2));
+            //                                break;
+            //                            case 7:
+            //                                sw.Write("{0};", Math.Sqrt(A4 * A4 + 2 * A4 * B2 * F1F2 + B2 * B2));
+            //                                break;
+
+            //                            default:
+            //                                break;
+            //                        }
+            //                    }
+            //                    else sw.Write(";");
+
+
+            //                    if (i < F3_kiselev.Count)
+            //                    {
+            //                        sw.Write("{0};", F3_kiselev[i]);
+            //                    }
+            //                    else sw.Write(";");
+
+
+
+            //                    sw.WriteLine();
+            //                }
+            //                   sw.Close();
+
+
+            //            }
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OnChangeComboboxes(object sender, EventArgs e)
         {
             chart1.Series[0].Points.Clear();
             chart1.Series[1].Points.Clear();
@@ -655,14 +705,66 @@ namespace AnaliticOptimumVector
             int Y = (int)comboBox2.SelectedIndex;
 
 
-            MessageBox.Show(X.ToString()+ " " + Y.ToString());
-
-            foreach (var item in vecA)
+            if (X<0)
             {
-
+                X = 0;
             }
 
 
+            if (Y<0)
+            {
+                Y = 1;
+            }
+
+
+            
+            
+
+         //  MessageBox.Show(X.ToString() + " " + Y.ToString());
+
+            foreach (var item in vecA)
+            {
+                chart1.Series[0].Points.AddXY(item[X], item[Y]);
+
+            }
+
+            foreach (var item in vecB)
+            {
+                chart1.Series[1].Points.AddXY(item[X], item[Y]);
+            }
+
+            foreach (var item in vecRaz)
+            {
+                chart1.Series[2].Points.AddXY(item[X], item[Y]);
+            }
+
+            foreach (var item in vecChas)
+            {
+                chart1.Series[3].Points.AddXY(item[X], item[Y]);
+            }
+
+
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            chart1.Series[0].Enabled = checkBox1.Checked;
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            chart1.Series[1].Enabled = checkBox2.Checked;
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            chart1.Series[2].Enabled = checkBox3.Checked;
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            chart1.Series[3].Enabled = checkBox4.Checked;
         }
     }
 }
