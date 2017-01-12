@@ -16,3 +16,12 @@ H:\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimum
 H:\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.csproj.GenerateResource.Cache
 H:\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.exe
 H:\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.pdb
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\bin\Debug\AnaliticOptimumVector.exe.config
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.exe
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.pdb
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\bin\Debug\AnaliticOptimumVector.exe
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\bin\Debug\AnaliticOptimumVector.pdb
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.csprojResolveAssemblyReference.cache
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.Form1.resources
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.Properties.Resources.resources
+H:\Белобродский\PHD\AnaliticOptimumVector_END\AnaliticOptimumVector\obj\Debug\AnaliticOptimumVector.csproj.GenerateResource.Cache
